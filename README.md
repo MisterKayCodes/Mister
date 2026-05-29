@@ -83,31 +83,37 @@ kay help
 
 ---
 
-## 📁 Project Structure
+
 
 ```
 Mister/
 ├── bot.py                 # 🦴 Skeleton + Mouth (CLI entry point)
 ├── kay.bat                # 🖐️ Terminal launcher
-├── core/
-│   ├── tree_brain.py      # 🧠 Brain (scanning logic)
-│   ├── reader_brain.py    # 🧠 Brain (reading logic)
-│   └── find_brain.py      # 🧠 Brain (search logic)
-├── tools/
-│   └── file_walker.py     # Hands (file system access)
+├── parsers/               # 👂 Ears (translates user input)
+│   ├── __init__.py        # Parser package init
+│   ├── scan_parser.py     # Scan command parser
+│   ├── read_parser.py     # Read command parser
+│   └── find_parser.py     # Find command parser
+├── core/                  # 🧠 Brain (pure logic)
+│   ├── tree_brain.py      # Scanning logic
+│   ├── reader_brain.py    # Reading logic
+│   └── find_brain.py      # Search logic
+├── tools/                 # 🖐️ Hands (file system access)
+│   └── file_walker.py     # File walking utilities
 ├── memory/                # 💾 Memory (future: learned patterns)
 ├── docs/
 │   └── capabilities.md    # 📋 Full command reference
 └── README.md              # This file
 ```
 
-### Biological Architecture (Mister Alert inspired)
+### Biological Architecture (Updated)
 
 | Component | Role | Location |
 |-----------|------|----------|
+| 👂 Ears | Translates user input into clean objects | `parsers/` |
 | 🧠 Brain | Pure logic, no I/O | `core/` |
 | 🖐️ Hands | File system actions | `tools/` |
-| 👄 Mouth | CLI parsing | `bot.py` |
+| 👄 Mouth | CLI parsing and output | `bot.py` |
 | 🦴 Skeleton | App entry & wiring | `bot.py` |
 | 💾 Memory | Persistent storage | `memory/` |
 
