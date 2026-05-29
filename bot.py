@@ -20,9 +20,15 @@ def print_help():
                   Example: python bot.py scan C:/myproject
                   Example: python bot.py scan
 
+  read <file>     Show contents of a file
+                  Example: kay read bot.py
+                  Example: kay read bot.py --lines
+                  Example: kay read bot.py 10-25
+                  Example: kay read bot.py 10-25 --lines
+
   help            Show this message
 
-More commands coming: teach, find, read, remember
+More commands coming: teach, find, remember
 """)
 
 def command_scan(path):
@@ -44,6 +50,24 @@ def command_scan(path):
     # Use the new smart scan with prompt
     TreeBrain.scan_with_prompt(path)
 
+# ============================================
+# UPDATED: read command handler with line range
+# ============================================
+def command_read(file_path, show_lines=False, line_range=None):
+    """Handle the 'read' command"""
+    
+    if not file_path:
+        print("❌ Error: Please provide a file to read")
+        print("Example: kay read bot.py")
+        print("Example: kay read bot.py --lines")
+        print("Example: kay read bot.py 10-25")
+        return
+    
+    from core.reader_brain import ReaderBrain
+    result = ReaderBrain.read_file(file_path, show_lines, line_range)
+    print(result)
+# ============================================
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -59,6 +83,36 @@ def main():
     elif command == "scan":
         path = sys.argv[2] if len(sys.argv) > 2 else None
         command_scan(path)
+    
+    # ============================================
+    # UPDATED: read command with line range parsing
+    # ============================================
+    elif command == "read":
+        if len(sys.argv) < 3:
+            print("❌ Error: Please provide a file to read")
+            print("Example: kay read bot.py")
+            print("Example: kay read bot.py --lines")
+            print("Example: kay read bot.py 10-25")
+        else:
+            file_path = sys.argv[2]
+            show_lines = "--lines" in sys.argv
+            
+            # Check for line range (e.g., "10-25")
+            line_range = None
+            for arg in sys.argv[3:]:
+                if "-" in arg and not arg.startswith("--"):
+                    try:
+                        parts = arg.split("-")
+                        start = int(parts[0])
+                        end = int(parts[1])
+                        line_range = (start, end)
+                    except:
+                        print(f"❌ Invalid line range: {arg}")
+                        print("Use format like: 10-25")
+                        return
+            
+            command_read(file_path, show_lines, line_range)
+    # ============================================
     
     else:
         print(f"❌ Unknown command: {command}")

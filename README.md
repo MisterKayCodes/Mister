@@ -1,7 +1,7 @@
 
 # 🧠 Mister - Your Personal Coding Assistant
 
-**Mister** is a lightweight, terminal-based AI assistant that lives in your project folder. No API calls. No token costs. Just pure Python that helps you scan, understand, and navigate your codebase.
+**Mister** is a lightweight, terminal-based AI assistant that lives in your project folder. No API calls. No token costs. Just pure Python that helps you scan, read, understand, and navigate your codebase.
 
 > *"Stop burning money on LLMs. Let Mister do the simple stuff."*
 
@@ -14,6 +14,7 @@
 | Command | What it does |
 |---------|---------------|
 | `kay scan [path]` | Shows folder tree with smart depth control |
+| `kay read <file>` | Shows file contents with line numbers and ranges |
 | `kay help` | Displays this help message |
 
 ### Smart Scanning Behavior
@@ -22,6 +23,13 @@
 - **>50 items** → Shows root level, then asks "Show all files? (y/n)"
 - **Auto-skips** → `venv`, `.git`, `node_modules`, `__pycache__`, and more
 - **Current folder** → Type `kay scan` without a path to scan where you are
+
+### Smart Reading Behavior
+
+- **Whole file** → `kay read bot.py` shows everything
+- **With line numbers** → `kay read bot.py --lines` adds numbers
+- **Specific lines** → `kay read bot.py 10-25` shows only lines 10 to 25
+- **Auto-detects** → Missing files, folders, binary files (won't crash)
 
 ---
 
@@ -48,6 +56,11 @@ kay scan C:\MyProject
 cd C:\MyProject
 kay scan
 
+# Read any file
+kay read bot.py
+kay read bot.py --lines
+kay read bot.py 10-25
+
 # Show help
 kay help
 ```
@@ -61,7 +74,8 @@ Mister/
 ├── bot.py                 # 🦴 Skeleton + Mouth (CLI entry point)
 ├── kay.bat                # 🖐️ Terminal launcher
 ├── core/
-│   └── tree_brain.py      # 🧠 Brain (scanning logic)
+│   ├── tree_brain.py      # 🧠 Brain (scanning logic)
+│   └── reader_brain.py    # 🧠 Brain (reading logic)
 ├── tools/
 │   └── file_walker.py     # Hands (file system access)
 ├── memory/                # 💾 Memory (future: learned patterns)
@@ -121,6 +135,42 @@ $ kay scan C:\LargeProject
 [shows full tree]
 ```
 
+### Reading files
+
+```bash
+# Show entire file
+$ kay read bot.py
+
+📄 bot.py
+==================================================
+#!/usr/bin/env python3
+"""
+Mister Kay - Your personal coding assistant
+...
+
+# Show with line numbers
+$ kay read bot.py --lines
+
+📄 bot.py
+==================================================
+   1 | #!/usr/bin/env python3
+   2 | """
+   3 | Mister Kay - Your personal coding assistant
+...
+
+# Show specific lines only
+$ kay read bot.py 10-25
+
+📄 bot.py
+📌 Lines 10 to 25 (total 87 lines in file)
+==================================================
+def print_help():
+    """Show available commands"""
+    print("""
+📋 Mister Kay - Available Commands:
+...
+```
+
 ---
 
 ## 🔧 Skipped Folders (Auto-Ignored)
@@ -142,7 +192,7 @@ Mister automatically skips these to keep output clean:
 - [x] 50-item threshold with prompt
 - [x] Current folder detection
 - [x] Global `kay` command (PATH)
-- [ ] `kay read <file>` - Show file contents
+- [x] `kay read <file>` - Show file contents with line numbers and ranges
 - [ ] `kay find "<text>"` - Search across files
 - [ ] `kay teach "<pattern>"` - Learn new patterns
 - [ ] `kay remember` - Show learned patterns
@@ -193,4 +243,17 @@ Inspired by the **Mister Alert** biological architecture (Brain, Mouth, Hands, M
 **Made with 🧠 by Kay** | [Report Issue](https://github.com/misterkaycodes/mister/issues)
 ```
 
--
+---
+
+## Summary of changes made to README:
+
+| Section | Change |
+|---------|--------|
+| **Features table** | Added `kay read` row |
+| **Smart Reading Behavior** | New section added |
+| **Usage** | Added read examples |
+| **Project Structure** | Added `reader_brain.py` |
+| **Examples** | Added "Reading files" section |
+| **Roadmap** | Checked off `kay read` |
+
+---
