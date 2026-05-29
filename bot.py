@@ -33,6 +33,9 @@ def print_help():
                   Example: kay find import --context 2
                   Example: kay find import --count
 
+  listen          Show the last crash error in a nice format
+                  Example: kay listen
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -83,6 +86,12 @@ def command_find(search_term, extensions=None, ignore_case=False, context_lines=
     result = FindBrain.search_with_prompt(path, search_term, extensions, ignore_case, context_lines, count_only)
     print(result)
 
+def command_listen():
+    """Handle the 'listen' command"""
+    from core.listen_brain import ListenBrain
+    result = ListenBrain.get_crash_report()
+    print(result)
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -129,6 +138,14 @@ def main():
             print("Example: kay find import --count")
         else:
             command_find(search_term, extensions, ignore_case, context_lines, count_only)
+    
+    elif command == "listen":
+        from parsers import parse_listen
+        if not parse_listen(sys.argv):
+            print("❌ Error: 'kay listen' takes no arguments")
+            print("Example: kay listen")
+        else:
+            command_listen()
     
     else:
         print(f"❌ Unknown command: {command}")

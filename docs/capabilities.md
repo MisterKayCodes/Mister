@@ -1,3 +1,4 @@
+
 # Mister Kay - Capabilities
 
 ## Current Commands
@@ -44,15 +45,52 @@
 - **Default extensions:** .py, .txt, .md, .json, .yml, .yaml, .csv, .ini, .cfg, .toml
 - **Skips:** Same folders as scan + binary files
 
+### listen
+- **Usage:** `kay listen`
+- **What it does:** Shows the last crash error in a nice format
+- **How it works:**
+  - Run `kay_run python your_file.py` to auto-capture crashes
+  - Or manually save errors with `save_error()`
+  - Then `kay listen` displays the formatted error
+- **Smart behavior:**
+  - Extracts the main error message from traceback
+  - Shows full traceback (last 10 lines)
+  - Suggests "kay teach" for unknown errors
+- **Example output:**
+```
+🔍 Last Crash Report
+==================================================
+❌ Error: ModuleNotFoundError: No module named 'loguru'
+
+📋 Full traceback (last 10 lines):
+------------------------------
+   File "main.py", line 16, in <module>
+     from loguru import logger
+ModuleNotFoundError: No module named 'loguru'
+==================================================
+💡 Tip: Type 'kay teach' to teach me about this error.
+```
+
+### kay_run (wrapper)
+- **What it does:** Wrapper script that runs your Python files and auto-captures crashes
+- **Usage:** `kay_run python main.py`
+- **How it works:**
+  - Runs any command
+  - If crash occurs → auto-saves error to memory
+  - Then `kay listen` can show the error
+  - If success → runs normally, no error saved
+- **Works from any folder** (if PATH is set)
+
 ### help
 - **Usage:** `kay help`
 - **What it does:** Shows this message
 
 ## Coming Soon
+- `kay listen --fix` - Auto-suggest fixes for errors
+- `kay teach` - Teach Mister about new errors
+- `kay imports` - Find and fix broken imports
 - `kay find --context` - Show surrounding lines
-- `kay teach "<pattern>"` - Learn new patterns
 - `kay remember` - Show what I've learned
-- `kay run <file>` - Execute Python files
 - Parallel search (faster for large projects)
 
 ## Known Limitations
@@ -62,3 +100,6 @@
 - File encoding assumes UTF-8
 - Find command is single-threaded (may be slow on 10,000+ files)
 - Context lines feature not yet implemented
+```
+
+---

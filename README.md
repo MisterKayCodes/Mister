@@ -16,6 +16,8 @@
 | `kay scan [path]` | Shows folder tree with smart depth control |
 | `kay read <file>` | Shows file contents with line numbers and ranges |
 | `kay find <term>` | Searches for text across files with filters |
+| `kay listen` | Shows the last crash error in a nice format |
+| `kay_run python <file>` | Runs Python files and auto-captures crashes |
 | `kay help` | Displays this help message |
 
 ### Smart Scanning Behavior
@@ -40,6 +42,13 @@
 - **Count only** → `kay find import --count` shows just the numbers
 - **Auto-skips** → venv, .git, node_modules (same as scan)
 - **Default extensions** → .py, .txt, .md, .json, .yml, .csv, and more
+
+### Smart Crash Capture Behavior
+
+- **Auto-capture** → `kay_run python main.py` saves crashes automatically
+- **Formatted output** → Shows error with emojis and clear formatting
+- **Traceback display** → Shows last 10 lines of the crash
+- **Easy recall** → `kay listen` shows the last crash anytime
 
 ---
 
@@ -77,30 +86,38 @@ kay find import --ext .py
 kay find import --ignore-case
 kay find import --count
 
+# Capture and view crashes
+kay_run python main.py
+kay listen
+
 # Show help
 kay help
 ```
 
 ---
 
-
+## 📁 Project Structure
 
 ```
 Mister/
 ├── bot.py                 # 🦴 Skeleton + Mouth (CLI entry point)
 ├── kay.bat                # 🖐️ Terminal launcher
+├── kay_run.bat            # 🖐️ Crash capture wrapper
 ├── parsers/               # 👂 Ears (translates user input)
 │   ├── __init__.py        # Parser package init
 │   ├── scan_parser.py     # Scan command parser
 │   ├── read_parser.py     # Read command parser
-│   └── find_parser.py     # Find command parser
+│   ├── find_parser.py     # Find command parser
+│   └── listen_parser.py   # Listen command parser
 ├── core/                  # 🧠 Brain (pure logic)
 │   ├── tree_brain.py      # Scanning logic
 │   ├── reader_brain.py    # Reading logic
-│   └── find_brain.py      # Search logic
+│   ├── find_brain.py      # Search logic
+│   └── listen_brain.py    # Crash capture logic
 ├── tools/                 # 🖐️ Hands (file system access)
-│   └── file_walker.py     # File walking utilities
-├── memory/                # 💾 Memory (future: learned patterns)
+│   ├── file_walker.py     # File walking utilities
+│   └── error_catcher.py   # Save/load crash errors
+├── memory/                # 💾 Memory (stores last_error.txt)
 ├── docs/
 │   └── capabilities.md    # 📋 Full command reference
 └── README.md              # This file
@@ -242,6 +259,36 @@ $ kay find import --count
 📁 Searched 8 files
 ```
 
+### Capturing and viewing crashes
+
+```bash
+# Run your Python file with kay_run (auto-captures crashes)
+$ kay_run python main.py
+
+[Mister] Crash detected! Saving error...
+[Mister] Error saved. Type 'kay listen' to see details.
+
+Traceback (most recent call last):
+  File "main.py", line 16, in <module>
+    from loguru import logger
+ModuleNotFoundError: No module named 'loguru'
+
+# View the formatted crash
+$ kay listen
+
+🔍 Last Crash Report
+==================================================
+❌ Error: ModuleNotFoundError: No module named 'loguru'
+
+📋 Full traceback (last 10 lines):
+------------------------------
+   File "main.py", line 16, in <module>
+     from loguru import logger
+ModuleNotFoundError: No module named 'loguru'
+==================================================
+💡 Tip: Type 'kay teach' to teach me about this error.
+```
+
 ---
 
 ## 🔧 Skipped Folders (Auto-Ignored)
@@ -265,11 +312,13 @@ Mister automatically skips these to keep output clean:
 - [x] Global `kay` command (PATH)
 - [x] `kay read <file>` - Show file contents with line numbers and ranges
 - [x] `kay find <term>` - Search across files with filters
+- [x] `kay listen` - Capture and view crash errors
+- [x] `kay_run` - Auto-capture crashes from any Python file
+- [ ] `kay listen --fix` - Auto-suggest fixes for errors
+- [ ] `kay teach` - Teach Mister about new errors
+- [ ] `kay imports` - Find and fix broken imports
 - [ ] `kay find --context` - Show surrounding lines
 - [ ] Parallel search (faster for large projects)
-- [ ] `kay teach "<pattern>"` - Learn new patterns
-- [ ] `kay remember` - Show learned patterns
-- [ ] `kay watch` - Watch for file changes
 
 ---
 
@@ -295,6 +344,10 @@ Short for **Mister Alert** - the biological architecture this project is built o
 
 For small/medium projects (<500 files), it's instant. For large projects (10,000+ files), it may take a few seconds. Parallel search is planned for future releases.
 
+### How does kay listen work?
+
+Run `kay_run python your_file.py` - if it crashes, Mister saves the error. Then `kay listen` shows it formatted nicely. Works from any folder.
+
 ---
 
 ## 🧠 Built On
@@ -319,17 +372,3 @@ Inspired by the **Mister Alert** biological architecture (Brain, Mouth, Hands, M
 
 **Made with 🧠 by Kay** | [Report Issue](https://github.com/misterkaycodes/mister/issues)
 ```
-
----
-
-## Summary of changes made to README:
-
-| Section | Change |
-|---------|--------|
-| **Features table** | Added `kay find` row |
-| **Smart Search Behavior** | New section added |
-| **Usage** | Added find examples |
-| **Project Structure** | Added `find_brain.py` |
-| **Examples** | Added "Searching files" section |
-| **Roadmap** | Checked off `kay find`, added `--context` and parallel search |
-| **FAQ** | Added question about find command speed |
