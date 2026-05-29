@@ -26,9 +26,16 @@ def print_help():
                   Example: kay read bot.py 10-25
                   Example: kay read bot.py 10-25 --lines
 
+  find <term>     Search for text in files
+                  Example: kay find import
+                  Example: kay find import --ext .py
+                  Example: kay find import --ignore-case
+                  Example: kay find import --context 2
+                  Example: kay find import --count
+
   help            Show this message
 
-More commands coming: teach, find, remember
+More commands coming: teach, remember
 """)
 
 def command_scan(path):
@@ -51,7 +58,7 @@ def command_scan(path):
     TreeBrain.scan_with_prompt(path)
 
 # ============================================
-# UPDATED: read command handler with line range
+# read command handler with line range
 # ============================================
 def command_read(file_path, show_lines=False, line_range=None):
     """Handle the 'read' command"""
@@ -65,6 +72,23 @@ def command_read(file_path, show_lines=False, line_range=None):
     
     from core.reader_brain import ReaderBrain
     result = ReaderBrain.read_file(file_path, show_lines, line_range)
+    print(result)
+# ============================================
+
+# ============================================
+# NEW: find command handler
+# ============================================
+def command_find(search_term, extensions=None, ignore_case=False, context_lines=0, count_only=False):
+    """Handle the 'find' command"""
+    
+    if not search_term:
+        print("❌ Error: Please provide a search term")
+        return
+    
+    path = os.getcwd()  # Search current folder by default
+    
+    from core.find_brain import FindBrain
+    result = FindBrain.search_with_prompt(path, search_term, extensions, ignore_case, context_lines, count_only)
     print(result)
 # ============================================
 
@@ -85,7 +109,7 @@ def main():
         command_scan(path)
     
     # ============================================
-    # UPDATED: read command with line range parsing
+    # read command with line range parsing
     # ============================================
     elif command == "read":
         if len(sys.argv) < 3:
@@ -112,6 +136,66 @@ def main():
                         return
             
             command_read(file_path, show_lines, line_range)
+    # ============================================
+    
+    # ============================================
+    # NEW: find command
+    # ============================================
+    elif command == "find":
+        if len(sys.argv) < 3:
+            print("❌ Error: Please provide a search term")
+            print("Example: kay find import")
+            print("Example: kay find import --ext .py")
+            print("Example: kay find import --ignore-case")
+            print("Example: kay find import --context 2")
+            print("Example: kay find import --count")
+        else:
+            search_term = sys.argv[2]
+            
+            # Parse options
+            extensions = None
+            ignore_case = False
+            context_lines = 0
+            count_only = False
+            
+            i = 3
+            while i < len(sys.argv):
+                arg = sys.argv[i]
+                
+                if arg == "--ext" and i + 1 < len(sys.argv):
+                    ext = sys.argv[i + 1]
+                    if not ext.startswith('.'):
+                        ext = '.' + ext
+                    if extensions is None:
+                        extensions = {ext}
+                    else:
+                        extensions.add(ext)
+                    i += 2
+                
+                elif arg == "--ignore-case":
+                    ignore_case = True
+                    i += 1
+                
+                elif arg == "--context" and i + 1 < len(sys.argv):
+                    try:
+                        context_lines = int(sys.argv[i + 1])
+                    except:
+                        print(f"❌ Invalid context value: {sys.argv[i + 1]}")
+                        return
+                    i += 2
+                
+                elif arg == "--count":
+                    count_only = True
+                    i += 1
+                
+                elif arg.startswith("--"):
+                    print(f"❌ Unknown option: {arg}")
+                    i += 1
+                
+                else:
+                    i += 1
+            
+            command_find(search_term, extensions, ignore_case, context_lines, count_only)
     # ============================================
     
     else:

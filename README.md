@@ -1,7 +1,7 @@
 
 # 🧠 Mister - Your Personal Coding Assistant
 
-**Mister** is a lightweight, terminal-based AI assistant that lives in your project folder. No API calls. No token costs. Just pure Python that helps you scan, read, understand, and navigate your codebase.
+**Mister** is a lightweight, terminal-based AI assistant that lives in your project folder. No API calls. No token costs. Just pure Python that helps you scan, read, search, understand, and navigate your codebase.
 
 > *"Stop burning money on LLMs. Let Mister do the simple stuff."*
 
@@ -15,6 +15,7 @@
 |---------|---------------|
 | `kay scan [path]` | Shows folder tree with smart depth control |
 | `kay read <file>` | Shows file contents with line numbers and ranges |
+| `kay find <term>` | Searches for text across files with filters |
 | `kay help` | Displays this help message |
 
 ### Smart Scanning Behavior
@@ -30,6 +31,15 @@
 - **With line numbers** → `kay read bot.py --lines` adds numbers
 - **Specific lines** → `kay read bot.py 10-25` shows only lines 10 to 25
 - **Auto-detects** → Missing files, folders, binary files (won't crash)
+
+### Smart Search Behavior
+
+- **Basic search** → `kay find import` searches all text files
+- **Filter by type** → `kay find import --ext .py` only Python files
+- **Case insensitive** → `kay find IMPORT --ignore-case`
+- **Count only** → `kay find import --count` shows just the numbers
+- **Auto-skips** → venv, .git, node_modules (same as scan)
+- **Default extensions** → .py, .txt, .md, .json, .yml, .csv, and more
 
 ---
 
@@ -61,6 +71,12 @@ kay read bot.py
 kay read bot.py --lines
 kay read bot.py 10-25
 
+# Search for text
+kay find import
+kay find import --ext .py
+kay find import --ignore-case
+kay find import --count
+
 # Show help
 kay help
 ```
@@ -75,7 +91,8 @@ Mister/
 ├── kay.bat                # 🖐️ Terminal launcher
 ├── core/
 │   ├── tree_brain.py      # 🧠 Brain (scanning logic)
-│   └── reader_brain.py    # 🧠 Brain (reading logic)
+│   ├── reader_brain.py    # 🧠 Brain (reading logic)
+│   └── find_brain.py      # 🧠 Brain (search logic)
 ├── tools/
 │   └── file_walker.py     # Hands (file system access)
 ├── memory/                # 💾 Memory (future: learned patterns)
@@ -171,6 +188,54 @@ def print_help():
 ...
 ```
 
+### Searching files
+
+```bash
+# Basic search
+$ kay find import
+
+🔍 Searching for "import" in C:\Kaycris\Mister
+==================================================
+
+📄 bot.py
+------------------------------
+    3 | import sys
+    4 | import os
+
+📄 core/find_brain.py
+------------------------------
+    1 | import os
+    2 | import re
+
+✅ Found 4 matches in 2 files
+📁 Searched 8 files
+
+# Search only Python files
+$ kay find "TreeBrain" --ext .py
+
+🔍 Searching for "TreeBrain" in C:\Kaycris\Mister
+==================================================
+
+📄 bot.py
+------------------------------
+   25 | from core.tree_brain import TreeBrain
+   26 | TreeBrain.scan_with_prompt(path)
+
+📄 core/tree_brain.py
+------------------------------
+    3 | class TreeBrain:
+
+✅ Found 3 matches in 2 files
+
+# Count only (fast)
+$ kay find import --count
+
+🔍 Searching for "import" in C:\Kaycris\Mister
+==================================================
+📊 Found 12 matches across 6 files
+📁 Searched 8 files
+```
+
 ---
 
 ## 🔧 Skipped Folders (Auto-Ignored)
@@ -193,7 +258,9 @@ Mister automatically skips these to keep output clean:
 - [x] Current folder detection
 - [x] Global `kay` command (PATH)
 - [x] `kay read <file>` - Show file contents with line numbers and ranges
-- [ ] `kay find "<text>"` - Search across files
+- [x] `kay find <term>` - Search across files with filters
+- [ ] `kay find --context` - Show surrounding lines
+- [ ] Parallel search (faster for large projects)
 - [ ] `kay teach "<pattern>"` - Learn new patterns
 - [ ] `kay remember` - Show learned patterns
 - [ ] `kay watch` - Watch for file changes
@@ -217,6 +284,10 @@ Short for **Mister Alert** - the biological architecture this project is built o
 ### Can I teach Mister new things?
 
 **Soon!** The `teach` command is in development. You'll be able to show Mister patterns once, and it will remember them forever.
+
+### Is the find command slow?
+
+For small/medium projects (<500 files), it's instant. For large projects (10,000+ files), it may take a few seconds. Parallel search is planned for future releases.
 
 ---
 
@@ -249,11 +320,10 @@ Inspired by the **Mister Alert** biological architecture (Brain, Mouth, Hands, M
 
 | Section | Change |
 |---------|--------|
-| **Features table** | Added `kay read` row |
-| **Smart Reading Behavior** | New section added |
-| **Usage** | Added read examples |
-| **Project Structure** | Added `reader_brain.py` |
-| **Examples** | Added "Reading files" section |
-| **Roadmap** | Checked off `kay read` |
-
----
+| **Features table** | Added `kay find` row |
+| **Smart Search Behavior** | New section added |
+| **Usage** | Added find examples |
+| **Project Structure** | Added `find_brain.py` |
+| **Examples** | Added "Searching files" section |
+| **Roadmap** | Checked off `kay find`, added `--context` and parallel search |
+| **FAQ** | Added question about find command speed |

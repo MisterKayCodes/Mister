@@ -26,18 +26,39 @@
   - Shows line range info when using specific lines
 - **Skips:** Binary files (can't read them)
 
+### find
+- **Usage:** `kay find <search_term>`
+- **What it does:** Searches for text across all files in current folder
+- **Options:**
+  - `kay find import` → Basic search (default extensions)
+  - `kay find import --ext .py` → Only search Python files
+  - `kay find import --ext .py --ext .js` → Search multiple extensions
+  - `kay find import --ignore-case` → Case insensitive search
+  - `kay find import --count` → Show only match count (no line details)
+  - `kay find import --context 2` → Show 2 lines before/after match (coming soon)
+- **Smart behavior:**
+  - Auto-skips venv, .git, node_modules, etc.
+  - Shows file path, line number, and matching line
+  - Won't crash on binary/unreadable files
+  - Shows search summary (total matches, files searched)
+- **Default extensions:** .py, .txt, .md, .json, .yml, .yaml, .csv, .ini, .cfg, .toml
+- **Skips:** Same folders as scan + binary files
+
 ### help
 - **Usage:** `kay help`
 - **What it does:** Shows this message
 
 ## Coming Soon
-- `kay find "<text>"` - Search for text across files
+- `kay find --context` - Show surrounding lines
 - `kay teach "<pattern>"` - Learn new patterns
 - `kay remember` - Show what I've learned
 - `kay run <file>` - Execute Python files
+- Parallel search (faster for large projects)
 
 ## Known Limitations
 - Only reads text files (no binary/image files)
 - Max depth for scan: unlimited (but asks for large folders)
 - Line numbers start at 1 (not 0)
 - File encoding assumes UTF-8
+- Find command is single-threaded (may be slow on 10,000+ files)
+- Context lines feature not yet implemented
