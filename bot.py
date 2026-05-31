@@ -158,6 +158,28 @@ def command_paste(file_path=None, preview=False, undo=False):
     print(message)
 
 
+def command_clean(dry_run=False, backups=False, temp=False):
+    """Handle the 'clean' command"""
+    from core.clean_brain import CleanBrain
+    
+    path = os.getcwd()
+    
+    if backups:
+        if dry_run:
+            count, message = CleanBrain.delete_backups(path, dry_run=True)
+            print(f"\n🧹 DRY RUN - Found {count} .bak files")
+            print("=" * 40)
+            print(message)
+            print("\n💡 Run 'kay clean --backups' to delete them")
+        else:
+            count, message = CleanBrain.delete_backups(path, dry_run=False)
+            print(f"\n🧹 {message}")
+    else:
+        print("❌ Please specify what to clean")
+        print("Example: kay clean --backups")
+        print("Example: kay clean --backups --dry-run")
+
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -242,6 +264,16 @@ def main():
             print("🔧 --fix coming soon!")
         else:
             command_imports()
+
+    elif command == "clean":
+        from parsers import parse_clean
+        dry_run, backups, temp = parse_clean(sys.argv)
+        
+        if not backups and not temp:
+            print("❌ Please specify what to clean")
+            print("Example: kay clean --backups")
+        else:
+            command_clean(dry_run, backups, temp)
     
     else:
         print(f"❌ Unknown command: {command}")

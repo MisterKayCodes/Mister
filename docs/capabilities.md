@@ -111,6 +111,28 @@
 💡 Tip: Run 'kay imports --fix' to attempt auto-fix
 ```
 
+### clean
+- **Usage:** `kay clean --backups`
+- **What it does:** Deletes all `.bak` backup files in current folder and all subfolders
+- **Options:**
+   - `kay clean --backups` → Delete all .bak files
+   - `kay clean --backups --dry-run` → Preview what would be deleted (no actual deletion)
+- **Smart behavior:**
+   - Recursively finds .bak files in all subfolders
+   - Shows count before deletion
+   - Dry run mode for safety
+   - Created by `kay paste` for undo functionality
+- **Example output:**
+```
+🧹 DRY RUN - Found 7 .bak files
+========================================
+Would delete 7 .bak files:
+C:\project\file1.bak
+C:\project\subfolder\file2.bak
+
+💡 Run 'kay clean --backups' to delete them
+```
+
 ### listen
 - **Usage:** `kay listen`
 - **What it does:** Shows the last crash error in a nice format
@@ -152,6 +174,7 @@ ModuleNotFoundError: No module named 'loguru'
 - **What it does:** Shows available commands
 
 ## Coming Soon
+- `kay clean --temp` - Delete temporary clipboard files
 - `kay paste --fix` - Auto-fix import issues
 - `kay listen --fix` - Auto-suggest fixes for errors
 - `kay teach` - Teach Mister about new errors
@@ -166,5 +189,10 @@ ModuleNotFoundError: No module named 'loguru'
 - File encoding assumes UTF-8
 - Find command is single-threaded (may be slow on 10,000+ files)
 - Context lines feature not yet fully implemented
+```
 
 ---
+
+**Changes made:**
+- Added `clean` command section
+- Updated "Coming Soon" with `kay clean --temp`

@@ -19,6 +19,7 @@
 | `kay copy <file>` | Copy file to clipboard (inter-process safe) |
 | `kay paste [file]` | Paste clipboard to file with backup/undo |
 | `kay imports` | Analyze imports and find broken dependencies |
+| `kay clean --backups` | Delete all .bak backup files in current folder and subfolders |
 | `kay listen` | Shows the last crash error in a nice format |
 | `kay_run python <file>` | Runs Python files and auto-captures crashes |
 | `kay help` | Displays this help message |
@@ -55,6 +56,13 @@
 - **Preview first** → `kay paste --preview` shows first 20 lines
 - **Easy undo** → `kay paste --undo` restores from backup
 - **Cross-platform** → Uses tkinter (built-in Python) with temp file fallback
+
+### Smart Clean Behavior
+
+- **Delete backups** → `kay clean --backups` removes all `.bak` files recursively
+- **Dry run** → `kay clean --backups --dry-run` previews what would be deleted
+- **Recursive** → Finds backups in current folder AND all subfolders
+- **Safe** → Asks nothing, just deletes (use dry-run first)
 
 ### Smart Crash Capture Behavior
 
@@ -112,6 +120,10 @@ kay paste --undo              # Restore from backup
 # Check for broken imports
 kay imports
 
+# Clean up backup files
+kay clean --backups           # Delete all .bak files
+kay clean --backups --dry-run # Preview what would be deleted
+
 # Capture and view crashes
 kay_run python main.py
 kay listen
@@ -136,14 +148,16 @@ Mister/
 │   ├── find_parser.py     # Find command parser
 │   ├── clipboard_parser.py # Copy/paste command parser
 │   ├── listen_parser.py   # Listen command parser
-│   └── imports_parser.py  # Imports command parser
+│   ├── imports_parser.py  # Imports command parser
+│   └── clean_parser.py    # Clean command parser
 ├── core/                  # 🧠 Brain (pure logic)
 │   ├── tree_brain.py      # Scanning logic
 │   ├── reader_brain.py    # Reading logic
 │   ├── find_brain.py      # Search logic
 │   ├── clipboard_brain.py # Copy/paste logic + memory
 │   ├── listen_brain.py    # Crash capture logic
-│   └── imports_brain.py   # Import analysis logic
+│   ├── imports_brain.py   # Import analysis logic
+│   └── clean_brain.py     # Clean backup logic
 ├── tools/                 # 🖐️ Hands (file system access)
 │   ├── file_walker.py     # File walking utilities
 │   ├── error_catcher.py   # Save/load crash errors
@@ -329,6 +343,28 @@ $ kay paste --undo
 ✅ Restored src/index.jsx from backup
 ```
 
+### Cleaning up backup files
+
+```bash
+# Preview what would be deleted
+$ kay clean --backups --dry-run
+
+🧹 DRY RUN - Found 7 .bak files
+========================================
+Would delete 7 .bak files:
+C:\Kaycris\Mister\test1.bak
+C:\Kaycris\Mister\test2.bak
+C:\Kaycris\Mister\subfolder\test3.bak
+C:\Kaycris\Mister\subfolder\deep\deeper\test4.bak
+
+💡 Run 'kay clean --backups' to delete them
+
+# Actually delete all .bak files
+$ kay clean --backups
+
+🧹 ✅ Deleted 7 .bak files
+```
+
 ### Capturing and viewing crashes
 
 ```bash
@@ -385,6 +421,7 @@ Mister automatically skips these to keep output clean:
 - [x] `kay copy <file>` - Copy file to clipboard
 - [x] `kay paste [file]` - Paste from clipboard with backup/undo
 - [x] `kay imports` - Find broken imports in Python files
+- [x] `kay clean --backups` - Delete all .bak backup files
 - [x] `kay listen` - Capture and view crash errors
 - [x] `kay_run` - Auto-capture crashes from any Python file
 - [ ] `kay paste --fix` - Auto-fix import issues
@@ -421,6 +458,10 @@ For small/medium projects (<500 files), it's instant. For large projects (10,000
 
 Run `kay_run python your_file.py` - if it crashes, Mister saves the error. Then `kay listen` shows it formatted nicely. Works from any folder.
 
+### What does kay clean --backups do?
+
+Deletes all `.bak` files in current folder and all subfolders. These are backup files created by `kay paste`. Use `--dry-run` first to preview.
+
 ---
 
 ## 🧠 Built On
@@ -445,3 +486,5 @@ Inspired by the **Mister Alert** biological architecture (Brain, Mouth, Hands, M
 
 **Made with 🧠 by Kay** | [Report Issue](https://github.com/misterkaycodes/mister/issues)
 ```
+
+---

@@ -63,7 +63,16 @@ class ClipboardBrain:
     
     @staticmethod
     def _read_clipboard_content():
-        """Read clipboard content from temp file"""
+        """Read clipboard content from Windows clipboard FIRST, then temp file fallback"""
+        
+        # FIXED: Method 1 - Check Windows clipboard FIRST (latest manual copy)
+        direct_content = ClipboardHelper.paste_from_clipboard()
+        if direct_content and len(direct_content.strip()) > 0:
+            # Update temp file with this new content for future use
+            ClipboardBrain._store_clipboard_content(direct_content)
+            return direct_content
+        
+        # Method 2 - Fallback to temp file (what kay copy saved)
         try:
             temp_file = os.path.join(tempfile.gettempdir(), "mister_clipboard_content.txt")
             if os.path.exists(temp_file):
@@ -72,8 +81,7 @@ class ClipboardBrain:
         except:
             pass
         
-        # Fallback to direct clipboard read
-        return ClipboardHelper.paste_from_clipboard()
+        return None
     
     @staticmethod
     def copy_file(file_path):
@@ -164,7 +172,7 @@ class ClipboardBrain:
             except Exception as e:
                 return False, f"❌ Error restoring backup: {e}"
         
-        # Get clipboard content (from temp file first, then fallback to clipboard)
+        # Get clipboard content (NOW reads Windows clipboard first)
         clipboard_content = ClipboardBrain._read_clipboard_content()
         if not clipboard_content:
             return False, "❌ Nothing to paste. Copy something first."
