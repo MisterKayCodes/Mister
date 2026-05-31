@@ -1,81 +1,82 @@
-"""Clipboard Helper - Hands for copy/paste operations"""
+"""Clipboard Helper - Hands for copy/paste operations using pyperclip"""
 
 import os
 import tempfile
-import tkinter as tk
 
 
 class ClipboardHelper:
-    """Handles clipboard operations (cross-platform via tkinter + temp file fallback)"""
+    """Handles clipboard operations using pyperclip + temp file fallback"""
     
     @staticmethod
     def copy_to_clipboard(text):
         """
-        Copy text to clipboard using tkinter (primary) or temp file fallback.
+        Copy text to clipboard using pyperclip.
         Returns True if successful.
         """
-        # Method 1: Try tkinter (built-in, reliable, cross-platform)
+        # Method 1: Try pyperclip
         try:
-            root = tk.Tk()
-            root.withdraw()  # Hide the window
-            root.clipboard_clear()
-            root.clipboard_append(text)
-            root.update()  # Ensure clipboard is updated
-            root.destroy()
+            import pyperclip
+            pyperclip.copy(text)
             return True
-        except Exception:
-            pass
+        except ImportError:
+            print("   ⚠️ pyperclip not installed. Run: pip install pyperclip")
+        except Exception as e:
+            print(f"   ⚠️ pyperclip error: {e}")
         
-        # Method 2: Fallback to temp file (ensures data persists across processes)
+        # Method 2: Fallback to temp file
+        return ClipboardHelper._copy_to_temp_file(text)
+    
+    @staticmethod
+    def _copy_to_temp_file(text):
+        """Save to temp file as last resort"""
         try:
             temp_file = os.path.join(tempfile.gettempdir(), "mister_clipboard_content.txt")
             with open(temp_file, 'w', encoding='utf-8') as f:
                 f.write(text)
+            print(f"   📁 Content saved to: {temp_file}")
+            print("   Open this file and press Ctrl+A, Ctrl+C to copy")
             return True
         except Exception:
-            pass
-        
-        return False
+            return False
     
     @staticmethod
     def paste_from_clipboard():
         """
-        Get text from clipboard using tkinter (primary) or temp file fallback.
+        Get text from clipboard using pyperclip.
         Returns text or None if failed.
         """
-        # Method 1: Try tkinter first (built-in, direct)
+        # Method 1: Try pyperclip
         try:
-            root = tk.Tk()
-            root.withdraw()  # Hide the window
-            text = root.clipboard_get()
-            root.destroy()
+            import pyperclip
+            text = pyperclip.paste()
             if text:
                 return text
+        except ImportError:
+            pass
         except Exception:
             pass
         
-        # Method 2: Fallback to temp file
+        # Method 2: Try temp file
+        return ClipboardHelper._paste_from_temp_file()
+    
+    @staticmethod
+    def _paste_from_temp_file():
+        """Read from temp file"""
         try:
             temp_file = os.path.join(tempfile.gettempdir(), "mister_clipboard_content.txt")
             if os.path.exists(temp_file):
                 with open(temp_file, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    if content:
-                        return content
+                    return f.read()
         except Exception:
             pass
-        
         return None
     
     @staticmethod
     def clear_clipboard():
         """Clear the clipboard"""
         try:
-            root = tk.Tk()
-            root.withdraw()
-            root.clipboard_clear()
-            root.update()
-            root.destroy()
+            import pyperclip
+            pyperclip.copy("")
             return True
         except Exception:
             return False
