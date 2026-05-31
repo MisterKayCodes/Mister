@@ -16,6 +16,9 @@
 | `kay scan [path]` | Shows folder tree with smart depth control |
 | `kay read <file>` | Shows file contents with line numbers and ranges |
 | `kay find <term>` | Searches for text across files with filters |
+| `kay copy <file>` | Copy file to clipboard (inter-process safe) |
+| `kay paste [file]` | Paste clipboard to file with backup/undo |
+| `kay imports` | Analyze imports and find broken dependencies |
 | `kay listen` | Shows the last crash error in a nice format |
 | `kay_run python <file>` | Runs Python files and auto-captures crashes |
 | `kay help` | Displays this help message |
@@ -42,6 +45,16 @@
 - **Count only** → `kay find import --count` shows just the numbers
 - **Auto-skips** → venv, .git, node_modules (same as scan)
 - **Default extensions** → .py, .txt, .md, .json, .yml, .csv, and more
+
+### Smart Clipboard Behavior
+
+- **Copy files** → `kay copy bot.py` copies to clipboard (works in separate terminals)
+- **Paste files** → `kay paste newfile.py` pastes clipboard to file
+- **Auto-remember** → Remembers last copied file for easy paste
+- **Backup safe** → Always creates `.bak` backup before overwriting
+- **Preview first** → `kay paste --preview` shows first 20 lines
+- **Easy undo** → `kay paste --undo` restores from backup
+- **Cross-platform** → Uses tkinter (built-in Python) with temp file fallback
 
 ### Smart Crash Capture Behavior
 
@@ -86,6 +99,19 @@ kay find import --ext .py
 kay find import --ignore-case
 kay find import --count
 
+# Copy files to clipboard
+kay copy bot.py
+kay copy src/index.jsx
+
+# Paste from clipboard
+kay paste newfile.py          # Paste to new file
+kay paste                     # Paste to last copied file
+kay paste --preview           # Show first 20 lines
+kay paste --undo              # Restore from backup
+
+# Check for broken imports
+kay imports
+
 # Capture and view crashes
 kay_run python main.py
 kay listen
@@ -108,16 +134,23 @@ Mister/
 │   ├── scan_parser.py     # Scan command parser
 │   ├── read_parser.py     # Read command parser
 │   ├── find_parser.py     # Find command parser
-│   └── listen_parser.py   # Listen command parser
+│   ├── clipboard_parser.py # Copy/paste command parser
+│   ├── listen_parser.py   # Listen command parser
+│   └── imports_parser.py  # Imports command parser
 ├── core/                  # 🧠 Brain (pure logic)
 │   ├── tree_brain.py      # Scanning logic
 │   ├── reader_brain.py    # Reading logic
 │   ├── find_brain.py      # Search logic
-│   └── listen_brain.py    # Crash capture logic
+│   ├── clipboard_brain.py # Copy/paste logic + memory
+│   ├── listen_brain.py    # Crash capture logic
+│   └── imports_brain.py   # Import analysis logic
 ├── tools/                 # 🖐️ Hands (file system access)
 │   ├── file_walker.py     # File walking utilities
-│   └── error_catcher.py   # Save/load crash errors
-├── memory/                # 💾 Memory (stores last_error.txt)
+│   ├── error_catcher.py   # Save/load crash errors
+│   └── clipboard_helper.py # Clipboard operations (tkinter)
+├── memory/                # 💾 Memory (persistent storage)
+│   ├── last_error.txt     # Last crash error
+│   └── clipboard_history.json # Clipboard memory
 ├── docs/
 │   └── capabilities.md    # 📋 Full command reference
 └── README.md              # This file
@@ -259,6 +292,43 @@ $ kay find import --count
 📁 Searched 8 files
 ```
 
+### Copying and pasting files
+
+```bash
+# Copy a file to clipboard
+$ kay copy bot.py
+
+📋 Copied 246 lines (7.9 KB) from bot.py
+✅ Ready to paste (Ctrl+V)
+
+# Paste to a new file
+$ kay paste newfile.py
+
+✅ Pasted 246 lines to newfile.py
+
+# Paste to last copied file (auto-remembers)
+$ kay copy src/index.jsx
+$ kay paste          # Pastes back to index.jsx
+
+✅ Pasted 127 lines to src/index.jsx
+💾 Backup saved: src/index.jsx.bak
+
+# Preview clipboard before pasting
+$ kay paste --preview
+
+🔍 Preview (246 lines total):
+#!/usr/bin/env python3
+"""
+Mister Kay - Your personal coding assistant
+...
+... and 243 more lines
+
+# Undo a paste (restore from backup)
+$ kay paste --undo
+
+✅ Restored src/index.jsx from backup
+```
+
 ### Capturing and viewing crashes
 
 ```bash
@@ -312,11 +382,14 @@ Mister automatically skips these to keep output clean:
 - [x] Global `kay` command (PATH)
 - [x] `kay read <file>` - Show file contents with line numbers and ranges
 - [x] `kay find <term>` - Search across files with filters
+- [x] `kay copy <file>` - Copy file to clipboard
+- [x] `kay paste [file]` - Paste from clipboard with backup/undo
+- [x] `kay imports` - Find broken imports in Python files
 - [x] `kay listen` - Capture and view crash errors
 - [x] `kay_run` - Auto-capture crashes from any Python file
+- [ ] `kay paste --fix` - Auto-fix import issues
 - [ ] `kay listen --fix` - Auto-suggest fixes for errors
 - [ ] `kay teach` - Teach Mister about new errors
-- [ ] `kay imports` - Find and fix broken imports
 - [ ] `kay find --context` - Show surrounding lines
 - [ ] Parallel search (faster for large projects)
 
