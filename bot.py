@@ -55,6 +55,9 @@ def print_help():
                   Example: kay imports
                   Example: kay imports --fix (coming soon)
 
+  todo            Find TODO, FIXME, and BUG comments
+                  Example: kay todo
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -179,6 +182,27 @@ def command_clean(dry_run=False, backups=False, temp=False):
         print("Example: kay clean --backups")
         print("Example: kay clean --backups --dry-run")
 
+def command_todo():
+    """Handle the 'todo' command"""
+    from core.todo_brain import TodoBrain
+    
+    path = os.getcwd()
+    result = TodoBrain.scan_todos(path)
+    
+    print(f"\n📋 Todo Scan - {path}")
+    print("=" * 50)
+    print(f"📁 Files scanned: {result['files_scanned']}")
+    print(f"📌 Todos found: {result['todos_found']}")
+    print("=" * 50)
+    
+    if result['todos_found'] == 0:
+        print("\n🎉 No TODOs, FIXMEs, or BUGs found! Your code is spotless.")
+    else:
+        for file_path, todos in result['results']:
+            print(f"\n📄 {file_path}:")
+            for line_num, text in todos:
+                print(f"   [{line_num}] {text}")
+
 
 def main():
     """The Mouth - parses what you say"""
@@ -274,6 +298,11 @@ def main():
             print("Example: kay clean --backups")
         else:
             command_clean(dry_run, backups, temp)
+            
+    elif command == "todo":
+        from parsers import parse_todo
+        parse_todo(sys.argv)
+        command_todo()
     
     else:
         print(f"❌ Unknown command: {command}")

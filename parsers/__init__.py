@@ -7,5 +7,6 @@ from .listen_parser import parse_listen
 from .imports_parser import parse_imports
 from .clipboard_parser import parse_copy, parse_paste
 from .clean_parser import parse_clean
+from .todo_parser import parse_todo
 
-__all__ = ['parse_scan', 'parse_read', 'parse_find', 'parse_listen', 'parse_imports', 'parse_copy', 'parse_paste', 'parse_clean']
+__all__ = ['parse_scan', 'parse_read', 'parse_find', 'parse_listen', 'parse_imports', 'parse_copy', 'parse_paste', 'parse_clean', 'parse_todo']

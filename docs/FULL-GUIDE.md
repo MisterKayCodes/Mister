@@ -47,6 +47,11 @@
 - **Usage:** `kay_run python main.py`
 - **What it does:** Runs file, auto-captures crashes for `kay listen`
 
+### todo
+- **Usage:** `kay todo`
+- **What it does:** Scans project for TODO, FIXME, and BUG comments
+- **Smart behavior:** Only checks text and code files, skipping binaries and ignore directories.
+
 ## 🧪 Examples
 
 ```bash
@@ -73,6 +78,9 @@ kay paste --undo
 # Imports
 kay imports
 
+# Todo
+kay todo
+
 # Clean
 kay clean --backups --dry-run
 kay clean --backups
@@ -96,7 +104,8 @@ Mister/
 │   ├── clipboard_parser.py
 │   ├── listen_parser.py
 │   ├── imports_parser.py
-│   └── clean_parser.py
+│   ├── clean_parser.py
+│   └── todo_parser.py
 ├── core/
 │   ├── tree_brain.py
 │   ├── reader_brain.py
@@ -104,7 +113,8 @@ Mister/
 │   ├── clipboard_brain.py
 │   ├── listen_brain.py
 │   ├── imports_brain.py
-│   └── clean_brain.py
+│   ├── clean_brain.py
+│   └── todo_brain.py
 ├── tools/
 │   ├── file_walker.py
 │   ├── error_catcher.py
@@ -123,6 +133,7 @@ Mister/
 ## 📝 Roadmap
 
 - [x] scan, read, find, copy, paste, imports, clean, listen
+- [x] todo
 - [ ] `--fix` for imports
 - [ ] `--context` for find
 - [ ] `teach` command

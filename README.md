@@ -25,6 +25,7 @@ Perfect for developers who are tired of paying for simple operations that should
 | `kay imports` | Find broken Python imports |
 | `kay clean --backups` | Delete all .bak files recursively |
 | `kay listen` | View last crash error in nice format |
+| `kay todo` | Find TODO, FIXME, and BUG comments in code |
 
 ---
 
@@ -82,6 +83,9 @@ kay paste --undo
 
 # Check for broken imports
 kay imports
+
+# Find all TODO and FIXME comments
+kay todo
 
 # Clean up backup files (preview first)
 kay clean --backups --dry-run
