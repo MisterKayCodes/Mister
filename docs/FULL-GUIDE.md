@@ -52,6 +52,14 @@
 - **What it does:** Scans project for TODO, FIXME, and BUG comments
 - **Smart behavior:** Only checks text and code files, skipping binaries and ignore directories.
 
+### check
+- **Usage:** `kay check`
+- **What it does:** Runs project health check.
+- **Smart behavior:**
+  - **Syntax Sweep:** Checks all Python files for fatal syntax errors without executing them.
+  - **Dependency Detective:** Compares your `import` statements against `requirements.txt` to find missing or unused packages.
+  - **Heavy File Warning:** Warns you if any file exceeds 550 lines.
+
 ## 🧪 Examples
 
 ```bash
@@ -81,6 +89,9 @@ kay imports
 # Todo
 kay todo
 
+# Check
+kay check
+
 # Clean
 kay clean --backups --dry-run
 kay clean --backups
@@ -105,7 +116,8 @@ Mister/
 │   ├── listen_parser.py
 │   ├── imports_parser.py
 │   ├── clean_parser.py
-│   └── todo_parser.py
+│   ├── todo_parser.py
+│   └── check_parser.py
 ├── core/
 │   ├── tree_brain.py
 │   ├── reader_brain.py
@@ -114,7 +126,8 @@ Mister/
 │   ├── listen_brain.py
 │   ├── imports_brain.py
 │   ├── clean_brain.py
-│   └── todo_brain.py
+│   ├── todo_brain.py
+│   └── check_brain.py
 ├── tools/
 │   ├── file_walker.py
 │   ├── error_catcher.py
@@ -134,6 +147,7 @@ Mister/
 
 - [x] scan, read, find, copy, paste, imports, clean, listen
 - [x] todo
+- [x] check
 - [ ] `--fix` for imports
 - [ ] `--context` for find
 - [ ] `teach` command

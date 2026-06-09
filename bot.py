@@ -58,6 +58,9 @@ def print_help():
   todo            Find TODO, FIXME, and BUG comments
                   Example: kay todo
 
+  check           Run project health check (syntax, dependencies, heavy files)
+                  Example: kay check
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -203,6 +206,54 @@ def command_todo():
             for line_num, text in todos:
                 print(f"   [{line_num}] {text}")
 
+def command_check():
+    """Handle the 'check' command"""
+    from core.check_brain import CheckBrain
+    
+    path = os.getcwd()
+    print(f"\n🩺 Running Project Health Check - {path}...")
+    result = CheckBrain.run_check(path)
+    
+    print("=" * 50)
+    print(f"📁 Python files scanned: {result['files_scanned']}")
+    
+    # Syntax Errors
+    if result['syntax_errors']:
+        print("\n❌ SYNTAX ERRORS FOUND:")
+        for err in result['syntax_errors']:
+            print(f"   📄 {err['file']}:{err['line']}")
+            print(f"      {err['msg']}")
+            if err['text']:
+                print(f"      Code: {err['text']}")
+    else:
+        print("✅ Syntax: All clear! No broken code found.")
+        
+    # Heavy Files
+    if result['heavy_files']:
+        print("\n⚠️  HEAVY FILES DETECTED (>550 lines):")
+        for file, lines in result['heavy_files']:
+            print(f"   📄 {file} is getting huge ({lines} lines). Consider splitting it!")
+    else:
+        print("✅ File Size: All clear! No massive files found.")
+        
+    # Requirements
+    if os.path.exists(os.path.join(path, 'requirements.txt')):
+        if result['missing_requirements']:
+            print("\n❌ MISSING REQUIREMENTS:")
+            for req in result['missing_requirements']:
+                print(f"   📦 You imported '{req}' but it's not in requirements.txt!")
+                
+        if result['unused_requirements']:
+            print("\n👻 GHOST REQUIREMENTS:")
+            for req in result['unused_requirements']:
+                print(f"   👻 '{req}' is in requirements.txt but you aren't importing it.")
+                
+        if not result['missing_requirements'] and not result['unused_requirements']:
+            print("✅ Dependencies: All clear! requirements.txt matches your imports perfectly.")
+    else:
+        print("\n⚠️  No requirements.txt found. Skipping dependency check.")
+        
+    print("=" * 50)
 
 def main():
     """The Mouth - parses what you say"""
@@ -303,6 +354,11 @@ def main():
         from parsers import parse_todo
         parse_todo(sys.argv)
         command_todo()
+        
+    elif command == "check":
+        from parsers import parse_check
+        parse_check(sys.argv)
+        command_check()
     
     else:
         print(f"❌ Unknown command: {command}")

@@ -26,6 +26,7 @@ Perfect for developers who are tired of paying for simple operations that should
 | `kay clean --backups` | Delete all .bak files recursively |
 | `kay listen` | View last crash error in nice format |
 | `kay todo` | Find TODO, FIXME, and BUG comments in code |
+| `kay check` | Project health check (syntax, dependencies, heavy files) |
 
 ---
 
@@ -86,6 +87,9 @@ kay imports
 
 # Find all TODO and FIXME comments
 kay todo
+
+# Run project health check
+kay check
 
 # Clean up backup files (preview first)
 kay clean --backups --dry-run
