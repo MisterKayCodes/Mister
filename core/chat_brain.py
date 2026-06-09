@@ -5,6 +5,42 @@ from .personality_engine import speak
 
 class ChatBrain:
     @staticmethod
+    def run_refactor_session(path):
+        print("\n" + "="*50)
+        print(f"Kay: {speak('acknowledgments')} Let's refactor safely!")
+        print("💡 GOLDEN RULE: Refactoring changes STRUCTURE, not BEHAVIOR.")
+        print("="*50)
+        
+        target_file = input("\nKay: What file are we starting with? (e.g. bot.py, or 'cancel'): ").strip()
+        if not target_file or target_file.lower() == 'cancel':
+            return
+            
+        print(f"Kay: Analyzing {target_file} for dependencies...")
+        import bot
+        bot.command_analyze(target_file)
+        
+        print("\nKay: Okay Boss, we have our blueprint. Let's move ONE piece at a time.")
+        while True:
+            cmd = input("\nKay (Refactor Mode): What do you want to extract? (format: <function> to <new_file.py>, or 'done'): ").strip()
+            if cmd.lower() in ['done', 'exit', 'quit', 'cancel', 'bye']:
+                print(f"Kay: {speak('success')} Refactor session complete! Don't forget to test your server and commit your code!")
+                break
+                
+            parts = cmd.split(' to ')
+            if len(parts) == 2:
+                func_name = parts[0].strip()
+                dest_file = parts[1].strip()
+                
+                print(f"Kay: Extracting {func_name} to {dest_file}...")
+                bot.command_extract(target_file, func_name, dest_file)
+                
+                print(f"Kay: Running quick health check...")
+                bot.command_check()
+                print("\nKay: Remember Rule 6: Test your changes before we extract the next piece!")
+            else:
+                print("Kay: I didn't understand that. Please use the format 'FunctionName to new_file.py', or type 'done'.")
+
+    @staticmethod
     def start_chat():
         print(f"Kay: {speak('greetings')} {speak('names')}! What can I do for you today?")
         print("(Type 'exit', 'bye', or 'quit' to leave)")
@@ -28,7 +64,7 @@ class ChatBrain:
                 if custom_word in user_input:
                     user_input = user_input.replace(custom_word, intent)
                     
-            if user_input in ['exit', 'bye', 'quit', 'good boy', 'goodbye']:
+            if any(word in user_input.split() for word in ['exit', 'bye', 'quit', 'goodbye']) or 'good boy' in user_input:
                 print(f"Kay: {speak('farewells')}")
                 break
                 
@@ -91,6 +127,9 @@ class ChatBrain:
                 print(f"Kay: {speak('acknowledgments')} I can do that! It's safer to use my specific command for surgery.")
                 print("Tip: type 'exit' to leave chat, then run:")
                 print("kay extract <source_file> <function_name> <dest_file>")
+                
+            elif any(word in user_input for word in ['refactor', 'restructure']):
+                ChatBrain.run_refactor_session(path)
 
             elif any(word in user_input for word in ['what', 'can', 'do', 'help', 'features']):
                 print(f"Kay: I can help you with a few things, {speak('names')}!")
@@ -104,7 +143,11 @@ class ChatBrain:
             else:
                 print(f"Kay: {speak('confusion')}")
                 teach_intent = input("Kay: What did you mean? (e.g. 'extract', 'check', 'todo', or 'skip'): ").strip().lower()
+                valid_intents = ['check', 'health', 'broken', 'doctor', 'errors', 'todo', 'task', 'fixme', 'bug', 'import', 'dependency', 'scan', 'folder', 'files', 'tree', 'analyze', 'blueprint', 'extract', 'surgery', 'move', 'what', 'can', 'do', 'help', 'features', 'refactor']
                 if teach_intent and teach_intent != 'skip':
-                    custom_word = input("Kay: Which specific word should I remember? (e.g. 'take out'): ").strip().lower()
-                    if custom_word and TeachBrain.save_vocab(custom_word, teach_intent):
-                        print(f"Kay: {speak('success')} I will remember that '{custom_word}' means '{teach_intent}'!")
+                    if teach_intent not in valid_intents:
+                        print("Kay: I don't know how to do that yet! Try teaching me a word for 'extract', 'check', 'todo', or 'analyze'.")
+                    else:
+                        custom_word = input("Kay: Which specific word should I remember? (e.g. 'take out'): ").strip().lower()
+                        if custom_word and TeachBrain.save_vocab(custom_word, teach_intent):
+                            print(f"Kay: {speak('success')} I will remember that '{custom_word}' means '{teach_intent}'!")
