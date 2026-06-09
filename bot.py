@@ -64,6 +64,12 @@ def print_help():
   talk            Chat with Kay interactively in plain English!
                   Example: kay talk
 
+  analyze         Parse a Python file and find its dependents
+                  Example: kay analyze bot.py
+
+  extract         Safely extract a class/function to a new file
+                  Example: kay extract bot.py main new_file.py
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -263,6 +269,42 @@ def command_chat():
     from core.chat_brain import ChatBrain
     ChatBrain.start_chat()
 
+def command_analyze(target_file):
+    from core.analyze_brain import AnalyzeBrain
+    import os
+    path = os.getcwd()
+    result = AnalyzeBrain.analyze_file(path, os.path.join(path, target_file))
+    
+    if "error" in result:
+        print(f"❌ {result['error']}")
+        return
+        
+    print(f"\n🔍 Blueprint for {target_file}")
+    print("=" * 50)
+    for c in result['classes']:
+        print(f"📦 Class: {c['name']} (Lines {c['start']}-{c['end']})")
+    for f in result['functions']:
+        print(f"🔧 Function: {f['name']} (Lines {f['start']}-{f['end']})")
+        
+    if not result['dependents']:
+        print("\n✅ No other files depend on this file.")
+    else:
+        print("\n⚠️  The following files depend on this file:")
+        for d in result['dependents']:
+            print(f"   - {d}")
+    print("=" * 50)
+
+def command_extract(source_file, target_name, dest_file):
+    from core.extract_brain import ExtractBrain
+    import os
+    path = os.getcwd()
+    success, msg = ExtractBrain.extract_node(
+        os.path.join(path, source_file),
+        target_name,
+        os.path.join(path, dest_file)
+    )
+    print(f"{'✅' if success else '❌'} {msg}")
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -372,6 +414,37 @@ def main():
         from parsers import parse_chat
         parse_chat(sys.argv)
         command_chat()
+        
+    elif command == "analyze":
+        from parsers import parse_analyze
+        target_file = parse_analyze(sys.argv)
+        if not target_file:
+            print("❌ Error: Please provide a file to analyze")
+            print("Example: kay analyze bot.py")
+        else:
+            command_analyze(target_file)
+            
+    elif command == "extract":
+        from parsers import parse_extract
+        source_file, target_name, dest_file = parse_extract(sys.argv)
+        if not source_file:
+            print("❌ Error: Missing arguments")
+            print("Example: kay extract bot.py command_chat new.py")
+        else:
+            command_extract(source_file, target_name, dest_file)
+            
+    elif command == "teach":
+        from parsers import parse_teach
+        word, intent = parse_teach(sys.argv)
+        if not word:
+            print("❌ Error: Missing arguments")
+            print("Example: kay teach yoink extract")
+        else:
+            from core.teach_brain import TeachBrain
+            if TeachBrain.save_vocab(word, intent):
+                print(f"✅ I will remember that '{word}' means '{intent}'!")
+            else:
+                print("❌ Failed to save memory.")
     
     else:
         print(f"❌ Unknown command: {command}")

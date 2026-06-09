@@ -28,6 +28,9 @@ Perfect for developers who are tired of paying for simple operations that should
 | `kay todo` | Find TODO, FIXME, and BUG comments in code |
 | `kay check` | Project health check (syntax, dependencies, heavy files) |
 | `kay talk` | Chat with Kay interactively in plain English |
+| `kay analyze` | Map out a file's blueprint and dependencies |
+| `kay extract` | Safely copy a class/function to a new file |
+| `kay teach` | Teach him new synonyms |
 
 ---
 

@@ -63,7 +63,22 @@
 ### talk
 - **Usage:** `kay talk`
 - **What it does:** Opens an interactive chat loop.
-- **Smart behavior:** Uses keyword mapping to secretly run commands (`check`, `todo`, `imports`, `scan`) and responds with a randomized, dynamic personality engine.
+- **Smart behavior:** Uses keyword mapping to secretly run commands (`check`, `todo`, `imports`, `scan`) and responds with a randomized, dynamic personality engine. If he doesn't understand you, he enters Learning Mode to ask you what you meant and remembers it forever.
+
+### analyze
+- **Usage:** `kay analyze <file>`
+- **What it does:** Scans a target Python file and maps out all its classes and functions.
+- **Smart behavior:** Also scans the rest of the project to find any files that currently import the target file so you know what will break if you move things.
+
+### extract
+- **Usage:** `kay extract <source> <name> <dest>`
+- **What it does:** Surgical copy-pasting. Safely extracts the target class/function from the source file and writes it to the destination file.
+- **Smart behavior:** Leaves the original file intact (Safe Mode) so you can manually delete it when you are confident.
+
+### teach
+- **Usage:** `kay teach <word> <intent>`
+- **What it does:** Hardcodes a custom synonym into Kay's brain.
+- **Example:** `kay teach "take out" "extract"`
 
 ## 🧪 Examples
 
@@ -99,6 +114,11 @@ kay check
 
 # Talk
 kay talk
+
+# Analyze & Extract
+kay analyze bot.py
+kay extract bot.py command_chat chat_logic.py
+kay teach yoink extract
 
 # Clean
 kay clean --backups --dry-run
@@ -160,6 +180,8 @@ Mister/
 - [x] todo
 - [x] check
 - [x] talk (Interactive Chat)
+- [x] analyze & extract (Refactoring)
+- [x] teach command
 - [ ] `--fix` for imports
 - [ ] `--context` for find
 - [ ] `teach` command

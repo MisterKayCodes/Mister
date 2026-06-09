@@ -10,5 +10,8 @@ from .clean_parser import parse_clean
 from .todo_parser import parse_todo
 from .check_parser import parse_check
 from .chat_parser import parse_chat
+from .analyze_parser import parse_analyze
+from .extract_parser import parse_extract
+from .teach_parser import parse_teach
 
-__all__ = ['parse_scan', 'parse_read', 'parse_find', 'parse_listen', 'parse_imports', 'parse_copy', 'parse_paste', 'parse_clean', 'parse_todo', 'parse_check', 'parse_chat']
+__all__ = ['parse_scan', 'parse_read', 'parse_find', 'parse_listen', 'parse_imports', 'parse_copy', 'parse_paste', 'parse_clean', 'parse_todo', 'parse_check', 'parse_chat', 'parse_analyze', 'parse_extract', 'parse_teach']
