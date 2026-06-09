@@ -27,6 +27,7 @@ Perfect for developers who are tired of paying for simple operations that should
 | `kay listen` | View last crash error in nice format |
 | `kay todo` | Find TODO, FIXME, and BUG comments in code |
 | `kay check` | Project health check (syntax, dependencies, heavy files) |
+| `kay talk` | Chat with Kay interactively in plain English |
 
 ---
 
@@ -90,6 +91,9 @@ kay todo
 
 # Run project health check
 kay check
+
+# Chat with Kay interactively
+kay talk
 
 # Clean up backup files (preview first)
 kay clean --backups --dry-run

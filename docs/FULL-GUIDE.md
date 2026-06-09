@@ -60,6 +60,11 @@
   - **Dependency Detective:** Compares your `import` statements against `requirements.txt` to find missing or unused packages.
   - **Heavy File Warning:** Warns you if any file exceeds 550 lines.
 
+### talk
+- **Usage:** `kay talk`
+- **What it does:** Opens an interactive chat loop.
+- **Smart behavior:** Uses keyword mapping to secretly run commands (`check`, `todo`, `imports`, `scan`) and responds with a randomized, dynamic personality engine.
+
 ## 🧪 Examples
 
 ```bash
@@ -92,6 +97,9 @@ kay todo
 # Check
 kay check
 
+# Talk
+kay talk
+
 # Clean
 kay clean --backups --dry-run
 kay clean --backups
@@ -117,7 +125,8 @@ Mister/
 │   ├── imports_parser.py
 │   ├── clean_parser.py
 │   ├── todo_parser.py
-│   └── check_parser.py
+│   ├── check_parser.py
+│   └── chat_parser.py
 ├── core/
 │   ├── tree_brain.py
 │   ├── reader_brain.py
@@ -127,7 +136,9 @@ Mister/
 │   ├── imports_brain.py
 │   ├── clean_brain.py
 │   ├── todo_brain.py
-│   └── check_brain.py
+│   ├── check_brain.py
+│   ├── chat_brain.py
+│   └── personality_engine.py
 ├── tools/
 │   ├── file_walker.py
 │   ├── error_catcher.py
@@ -148,6 +159,7 @@ Mister/
 - [x] scan, read, find, copy, paste, imports, clean, listen
 - [x] todo
 - [x] check
+- [x] talk (Interactive Chat)
 - [ ] `--fix` for imports
 - [ ] `--context` for find
 - [ ] `teach` command

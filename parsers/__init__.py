@@ -9,5 +9,6 @@ from .clipboard_parser import parse_copy, parse_paste
 from .clean_parser import parse_clean
 from .todo_parser import parse_todo
 from .check_parser import parse_check
+from .chat_parser import parse_chat
 
-__all__ = ['parse_scan', 'parse_read', 'parse_find', 'parse_listen', 'parse_imports', 'parse_copy', 'parse_paste', 'parse_clean', 'parse_todo', 'parse_check']
+__all__ = ['parse_scan', 'parse_read', 'parse_find', 'parse_listen', 'parse_imports', 'parse_copy', 'parse_paste', 'parse_clean', 'parse_todo', 'parse_check', 'parse_chat']

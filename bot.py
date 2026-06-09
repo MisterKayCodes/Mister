@@ -61,6 +61,9 @@ def print_help():
   check           Run project health check (syntax, dependencies, heavy files)
                   Example: kay check
 
+  talk            Chat with Kay interactively in plain English!
+                  Example: kay talk
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -255,6 +258,11 @@ def command_check():
         
     print("=" * 50)
 
+def command_chat():
+    """Handle the 'talk' command"""
+    from core.chat_brain import ChatBrain
+    ChatBrain.start_chat()
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -359,6 +367,11 @@ def main():
         from parsers import parse_check
         parse_check(sys.argv)
         command_check()
+        
+    elif command == "talk":
+        from parsers import parse_chat
+        parse_chat(sys.argv)
+        command_chat()
     
     else:
         print(f"❌ Unknown command: {command}")
