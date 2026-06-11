@@ -70,6 +70,9 @@ def print_help():
   extract         Safely extract a class/function to a new file
                   Example: kay extract bot.py main new_file.py
 
+  bundle          Bundle multiple files into a single clipboard string
+                  Example: kay bundle file1.py file2.py
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -305,6 +308,25 @@ def command_extract(source_file, target_name, dest_file):
     )
     print(f"{'✅' if success else '❌'} {msg}")
 
+def command_bundle(file_paths):
+    from core.bundle_brain import BundleBrain
+    import os
+    
+    # Convert paths to absolute if they aren't already
+    path = os.getcwd()
+    abs_paths = [os.path.join(path, f) for f in file_paths]
+    
+    success, msg, missing = BundleBrain.bundle_files(abs_paths)
+    
+    if success:
+        print(f"✅ Bundled {len(file_paths) - len(missing)} files and copied to clipboard!")
+        if missing:
+            print("⚠️ The following files were skipped (not found or error):")
+            for m in missing:
+                print(f"   - {m}")
+    else:
+        print(msg)
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -445,6 +467,15 @@ def main():
                 print(f"✅ I will remember that '{word}' means '{intent}'!")
             else:
                 print("❌ Failed to save memory.")
+
+    elif command == "bundle":
+        from parsers import parse_bundle
+        file_paths = parse_bundle(sys.argv)
+        if not file_paths:
+            print("❌ Error: Please provide at least one file to bundle.")
+            print("Example: kay bundle bot.py core/chat_brain.py")
+        else:
+            command_bundle(file_paths)
     
     else:
         print(f"❌ Unknown command: {command}")

@@ -31,6 +31,7 @@ Perfect for developers who are tired of paying for simple operations that should
 | `kay analyze` | Map out a file's blueprint and dependencies |
 | `kay extract` | Safely copy a class/function to a new file |
 | `kay teach` | Teach him new synonyms |
+| `kay bundle` | Combine multiple files into a single clipboard string for LLMs |
 
 ---
 

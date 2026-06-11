@@ -80,6 +80,11 @@
 - **What it does:** Hardcodes a custom synonym into Kay's brain.
 - **Example:** `kay teach "take out" "extract"`
 
+### bundle
+- **Usage:** `kay bundle <file1> <file2> ...`
+- **What it does:** Reads multiple files, adds a markdown header with the filename for each, separates them with `------------------`, and copies the entire bundled string to your clipboard.
+- **Smart behavior:** Perfect for feeding context to AI models. If a file is missing, he will let you know instead of crashing.
+
 ## 🧪 Examples
 
 ```bash
@@ -119,6 +124,9 @@ kay talk
 kay analyze bot.py
 kay extract bot.py command_chat chat_logic.py
 kay teach yoink extract
+
+# Bundle
+kay bundle bot.py core/chat_brain.py core/check_brain.py
 
 # Clean
 kay clean --backups --dry-run
