@@ -85,6 +85,11 @@
 - **What it does:** Reads multiple files, adds a markdown header with the filename for each, separates them with `------------------`, and copies the entire bundled string to your clipboard.
 - **Smart behavior:** Perfect for feeding context to AI models. If a file is missing, he will let you know instead of crashing.
 
+### apply
+- **Usage:** `kay apply [--force]`
+- **What it does:** The ultimate AI sync tool. Reads your clipboard for specially formatted DeepSeek answers (using `@@FILE:` and `@@CMD`), previews the changes, and automatically overwrites your local files and runs the terminal commands.
+- **Smart behavior:** Checks if the new code is perfectly identical or suspiciously shorter than the old code and warns you first!
+
 ## 🧪 Examples
 
 ```bash
@@ -127,6 +132,10 @@ kay teach yoink extract
 
 # Bundle
 kay bundle bot.py core/chat_brain.py core/check_brain.py
+
+# Apply
+kay apply
+kay apply --force
 
 # Clean
 kay clean --backups --dry-run
@@ -190,6 +199,7 @@ Mister/
 - [x] talk (Interactive Chat)
 - [x] analyze & extract (Refactoring)
 - [x] teach command
+- [x] bundle & apply (LLM Sync)
 - [ ] `--fix` for imports
 - [ ] `--context` for find
 - [ ] `teach` command

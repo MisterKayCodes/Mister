@@ -73,6 +73,9 @@ def print_help():
   bundle          Bundle multiple files into a single clipboard string
                   Example: kay bundle file1.py file2.py
 
+  apply           Apply file updates & terminal commands directly from clipboard
+                  Example: kay apply [--force]
+
   help            Show this message
 
 More commands coming: teach, remember
@@ -327,6 +330,11 @@ def command_bundle(file_paths):
     else:
         print(msg)
 
+def command_apply(force):
+    from core.patch_brain import PatchBrain
+    success, msg = PatchBrain.parse_and_apply(force=force)
+    print(msg)
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -476,6 +484,11 @@ def main():
             print("Example: kay bundle bot.py core/chat_brain.py")
         else:
             command_bundle(file_paths)
+            
+    elif command == "apply":
+        from parsers import parse_apply
+        force = parse_apply(sys.argv)
+        command_apply(force)
     
     else:
         print(f"❌ Unknown command: {command}")
