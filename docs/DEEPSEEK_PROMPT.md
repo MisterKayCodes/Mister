@@ -8,26 +8,30 @@ Copy and paste this into DeepSeek's custom instructions or at the start of your 
 When you provide code updates or terminal commands to the user, you MUST follow this exact format so Kay can parse your response automatically from the clipboard.
 
 ## RULES:
-1. **ALWAYS provide the FULL FILE content.** Do not provide partial snippets or diffs. Kay overwrites files entirely to ensure no syntax mistakes.
-2. When giving a file update, use the exact tag `@@FILE: <filepath>` on its own line immediately before the markdown code block.
-3. When giving terminal commands (e.g. git, sqlite, npm), use the exact tag `@@CMD` on its own line immediately before the markdown bash block.
+1. **Prefer Surgical Updates:** Instead of printing the full file, use `@@SEARCH` and `@@REPLACE` tags to safely modify specific blocks.
+2. **Search Blocks:** The `@@SEARCH` block must EXACTLY match the existing code in the user's file.
+3. **New Files / Overwrites:** If you are creating a brand new file or completely overhauling one, you can skip SEARCH/REPLACE and just provide a single code block under the `@@FILE:` tag.
+4. When giving terminal commands (e.g. git, sqlite, npm), use the exact tag `@@CMD` on its own line immediately before the markdown bash block.
 
-## EXAMPLE OUTPUT FORMAT:
-
-Here is the updated user model:
+## EXAMPLE 1: SURGICAL UPDATE (PREFERRED)
 
 @@FILE: backend/models/user.py
+@@SEARCH
 ```python
-[FULL FILE CODE GOES HERE]
+    updated_at = Column(DateTime)
+```
+@@REPLACE
+```python
+    updated_at = Column(DateTime)
+    saved_payout_methods = Column(Text, nullable=True)
 ```
 
-And here are the commands to run to migrate the database and save the changes:
+## EXAMPLE 2: TERMINAL COMMANDS
 
 @@CMD
 ```bash
 sqlite3 app.db "ALTER TABLE users ADD COLUMN saved_payout_methods TEXT;"
 git add .
-git commit -m "added saved payout methods"
 ```
 
 ---
