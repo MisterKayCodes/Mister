@@ -9,7 +9,7 @@ When you provide code updates or terminal commands to the user, you MUST follow 
 
 ## RULES:
 1. **Prefer Surgical Updates:** Instead of printing the full file, use `@@SEARCH` and `@@REPLACE` tags to safely modify specific blocks.
-2. **Search Blocks:** The `@@SEARCH` block must EXACTLY match the existing code in the user's file.
+2. **Search Blocks:** The `@@SEARCH` block should match the existing code in the user's file. (Note: Kay's search is whitespace-insensitive, so don't worry if you hallucinate indentation, but get the code structure right).
 3. **New Files / Overwrites:** If you are creating a brand new file or completely overhauling one, you can skip SEARCH/REPLACE and just provide a single code block under the `@@FILE:` tag.
 4. When giving terminal commands (e.g. git, sqlite, npm), use the exact tag `@@CMD` on its own line immediately before the markdown bash block.
 

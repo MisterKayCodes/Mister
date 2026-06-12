@@ -1,5 +1,6 @@
 import os
 import ast
+import re
 
 class ExtractBrain:
     @staticmethod
@@ -8,9 +9,17 @@ class ExtractBrain:
         if not os.path.exists(source_file):
             return False, f"Source file not found: {source_file}"
             
-        if not source_file.endswith('.py'):
-            return False, "ExtractBrain currently only supports .py files."
+        _, ext = os.path.splitext(source_file)
+        
+        if ext == '.py':
+            return ExtractBrain._extract_python(source_file, target_name, dest_file)
+        elif ext in ['.js', '.jsx', '.ts', '.tsx']:
+            return ExtractBrain._extract_js(source_file, target_name, dest_file)
+        else:
+            return False, f"ExtractBrain does not support {ext} files yet."
             
+    @staticmethod
+    def _extract_python(source_file, target_name, dest_file):
         try:
             with open(source_file, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
@@ -33,14 +42,63 @@ class ExtractBrain:
             
             extracted_code = "".join(lines[start:end])
             
-            # Ensure destination directory exists
             os.makedirs(os.path.dirname(os.path.abspath(dest_file)), exist_ok=True)
-            
-            # Write to destination
             with open(dest_file, 'w', encoding='utf-8') as f:
                 f.write(extracted_code)
                 
             return True, f"Successfully extracted '{target_name}' to {dest_file}."
             
         except Exception as e:
-            return False, f"Extraction failed: {e}"
+            return False, f"Python extraction failed: {e}"
+
+    @staticmethod
+    def _extract_js(source_file, target_name, dest_file):
+        """Lightweight bracket-matching parser for JS/TS/JSX/TSX"""
+        try:
+            with open(source_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+
+            # Regex to find standard JS declarations
+            # Matches: const target_name =, let target_name =, var target_name =, function target_name, class target_name
+            pattern = re.compile(rf'\b(?:const|let|var|function|class)\s+{target_name}\b')
+
+            start_line = -1
+            for i, line in enumerate(lines):
+                if pattern.search(line):
+                    start_line = i
+                    break
+
+            if start_line == -1:
+                return False, f"Could not find '{target_name}' in {source_file}."
+
+            # Now find the opening brace and match until it closes
+            brace_count = 0
+            found_first_brace = False
+            end_line = -1
+
+            for i in range(start_line, len(lines)):
+                line = lines[i]
+                for char in line:
+                    if char == '{':
+                        brace_count += 1
+                        found_first_brace = True
+                    elif char == '}':
+                        brace_count -= 1
+                        
+                if found_first_brace and brace_count == 0:
+                    end_line = i
+                    break
+
+            if not found_first_brace or end_line == -1:
+                return False, f"Could not perfectly match brackets for '{target_name}'. Code might be malformed."
+
+            extracted_code = "".join(lines[start_line:end_line + 1])
+            
+            os.makedirs(os.path.dirname(os.path.abspath(dest_file)), exist_ok=True)
+            with open(dest_file, 'w', encoding='utf-8') as f:
+                f.write(extracted_code)
+
+            return True, f"Successfully extracted '{target_name}' (JS/TS) to {dest_file}."
+
+        except Exception as e:
+            return False, f"JS extraction failed: {e}"

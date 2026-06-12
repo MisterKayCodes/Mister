@@ -81,7 +81,7 @@ def print_help():
 More commands coming: teach, remember
 """)
 
-def command_scan(path):
+def command_scan(path, show_line_count=False):
     """Handle the 'scan' command"""
     
     if not path:
@@ -97,7 +97,7 @@ def command_scan(path):
         return
     
     from core.tree_brain import TreeBrain
-    TreeBrain.scan_with_prompt(path)
+    TreeBrain.scan_with_prompt(path, show_line_count=show_line_count)
 
 def command_read(file_path, show_lines=False, line_range=None):
     """Handle the 'read' command"""
@@ -335,6 +335,17 @@ def command_apply(force):
     success, msg = PatchBrain.parse_and_apply(force=force)
     print(msg)
 
+def command_barrel(folder_path):
+    """Handle the 'barrel' command"""
+    from core.barrel_brain import BarrelBrain
+    import os
+    
+    path = os.getcwd()
+    abs_path = os.path.join(path, folder_path)
+    
+    success, msg = BarrelBrain.generate_barrel(abs_path)
+    print(msg)
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -349,8 +360,8 @@ def main():
     
     elif command == "scan":
         from parsers import parse_scan
-        path = parse_scan(sys.argv)
-        command_scan(path)
+        path, show_line_count = parse_scan(sys.argv)
+        command_scan(path, show_line_count=show_line_count)
     
     elif command == "read":
         from parsers import parse_read
@@ -489,6 +500,15 @@ def main():
         from parsers import parse_apply
         force = parse_apply(sys.argv)
         command_apply(force)
+        
+    elif command == "barrel":
+        from parsers.barrel_parser import parse_barrel
+        folder_path = parse_barrel(sys.argv)
+        if not folder_path:
+            print("❌ Error: Please provide a folder path.")
+            print("Example: kay barrel frontend/src/services/admin")
+        else:
+            command_barrel(folder_path)
     
     else:
         print(f"❌ Unknown command: {command}")

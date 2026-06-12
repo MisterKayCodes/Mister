@@ -17,7 +17,7 @@ Perfect for developers who are tired of paying for simple operations that should
 
 | Command | What it does |
 |---------|---------------|
-| `kay scan` | Smart folder tree (asks before huge folders) |
+| `kay scan` | Smart folder tree (`--line-count` for sizes) |
 | `kay read` | Read files with line numbers and ranges |
 | `kay find` | Search across files with extension filters |
 | `kay copy` | Copy file to clipboard (works across terminals) |
@@ -29,10 +29,11 @@ Perfect for developers who are tired of paying for simple operations that should
 | `kay check` | Project health check (syntax, dependencies, heavy files) |
 | `kay talk` | Chat with Kay interactively in plain English |
 | `kay analyze` | Map out a file's blueprint and dependencies |
-| `kay extract` | Safely copy a class/function to a new file |
+| `kay extract` | Safely copy a class/function to a new file (Python/JS/TS) |
 | `kay teach` | Teach him new synonyms |
+| `kay barrel` | Auto-generate an `index.js` export barrel for a folder |
 | `kay bundle` | Combine multiple files into a single clipboard string for LLMs |
-| `kay apply` | Automatically paste AI code & run terminal commands from clipboard |
+| `kay apply` | Fuzzy-paste AI code & run terminal commands from clipboard |
 
 ---
 
@@ -69,6 +70,9 @@ kay scan
 ```bash
 # Scan current folder
 kay scan
+
+# Scan and show line counts for each file
+kay scan --line-count
 
 # Read a file with line numbers
 kay read bot.py --lines
@@ -109,6 +113,12 @@ kay_run python main.py
 
 # View last crash
 kay listen
+
+# Auto-generate a barrel export file for an admin folder
+kay barrel frontend/src/services/admin
+
+# Extract a React component into a new file without breaking brackets
+kay extract Dashboard.jsx fetchDashboardData newFile.js
 ```
 
 ---

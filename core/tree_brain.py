@@ -20,16 +20,20 @@ class TreeBrain:
         return total
     
     @staticmethod
-    def build_tree(path, max_depth=None, current_depth=0, prefix="", is_last=True):
+    def _get_line_count_str(file_path, show_line_count):
+        if not show_line_count:
+            return ""
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = sum(1 for _ in f)
+                return f"({lines})"
+        except Exception:
+            return "(?)"
+
+    @staticmethod
+    def build_tree(path, max_depth=None, current_depth=0, prefix="", is_last=True, show_line_count=False):
         """
         Returns a string of the folder tree
-        
-        Args:
-            path: folder to scan
-            max_depth: None = full tree, 0 = root only, 1 = root + 1 level, etc.
-            current_depth: internal use only
-            prefix: internal use only
-            is_last: internal use only
         """
         
         result = ""
@@ -66,22 +70,23 @@ class TreeBrain:
                     result += f"{new_prefix}    └── (empty)\n"
                 else:
                     # Recursively build subfolder tree
-                    # If max_depth is not None, reduce depth by 1
                     new_depth = max_depth - 1 if max_depth is not None else None
-                    result += TreeBrain._build_subtree(item_path, new_prefix, is_last_item, new_depth)
+                    result += TreeBrain._build_subtree(item_path, new_prefix, is_last_item, new_depth, show_line_count)
             else:
                 # It's a file
                 connector = "└── " if is_last_item else "├── "
                 file_size = os.path.getsize(item_path)
+                line_count_str = TreeBrain._get_line_count_str(item_path, show_line_count)
+                
                 if file_size == 0:
                     result += f"{new_prefix}{connector}📄 {item} (empty)\n"
                 else:
-                    result += f"{new_prefix}{connector}📄 {item}\n"
+                    result += f"{new_prefix}{connector}📄 {item}{line_count_str}\n"
         
         return result
     
     @staticmethod
-    def _build_subtree(folder_path, prefix, is_last, max_depth=None):
+    def _build_subtree(folder_path, prefix, is_last, max_depth=None, show_line_count=False):
         """Helper to build subtree with correct prefix and depth limit"""
         folder_name = os.path.basename(folder_path)
         connector = "└── " if is_last else "├── "
@@ -111,19 +116,21 @@ class TreeBrain:
                     result += f"{new_prefix}    └── (empty)\n"
                 else:
                     new_depth = max_depth - 1 if max_depth is not None else None
-                    result += TreeBrain._build_subtree(item_path, new_prefix, is_last_item, new_depth)
+                    result += TreeBrain._build_subtree(item_path, new_prefix, is_last_item, new_depth, show_line_count)
             else:
                 item_connector = "└── " if is_last_item else "├── "
                 file_size = os.path.getsize(item_path)
+                line_count_str = TreeBrain._get_line_count_str(item_path, show_line_count)
+                
                 if file_size == 0:
                     result += f"{new_prefix}{item_connector}📄 {item} (empty)\n"
                 else:
-                    result += f"{new_prefix}{item_connector}📄 {item}\n"
+                    result += f"{new_prefix}{item_connector}📄 {item}{line_count_str}\n"
         
         return result
     
     @staticmethod
-    def scan_with_prompt(path):
+    def scan_with_prompt(path, show_line_count=False):
         """Smart scan: shows root level, asks if >50 items, then continues"""
         
         # First, count total items (fast)
@@ -132,14 +139,14 @@ class TreeBrain:
         # Show root level only first
         print(f"\n📁 Scanning: {path}")
         print("-" * 50)
-        root_tree = TreeBrain.build_tree(path, max_depth=0)
+        root_tree = TreeBrain.build_tree(path, max_depth=0, show_line_count=show_line_count)
         print(root_tree)
         print("-" * 50)
         
         # If total items <= 50, show full tree automatically
         if total_items <= 50:
             print(f"📊 This folder has {total_items} items (≤50). Showing full tree...\n")
-            full_tree = TreeBrain.build_tree(path, max_depth=None)
+            full_tree = TreeBrain.build_tree(path, max_depth=None, show_line_count=show_line_count)
             print(full_tree)
             return full_tree
         
@@ -150,7 +157,7 @@ class TreeBrain:
             answer = input("❓ Show all files? (y/n): ").lower().strip()
             if answer == 'y':
                 print("\n📂 Showing full tree...\n")
-                full_tree = TreeBrain.build_tree(path, max_depth=None)
+                full_tree = TreeBrain.build_tree(path, max_depth=None, show_line_count=show_line_count)
                 print(full_tree)
                 return full_tree
             elif answer == 'n':

@@ -5,6 +5,7 @@
 
 ### scan
 - **Usage:** `kay scan [path]`
+- **Options:** `--line-count` (shows the number of lines next to each file)
 - **What it does:** Shows folder tree
 - **Smart behavior:** ≤50 items → full tree, >50 items → asks "show all?"
 - **Skips:** venv, .git, node_modules, __pycache__, etc.
@@ -73,7 +74,7 @@
 ### extract
 - **Usage:** `kay extract <source> <name> <dest>`
 - **What it does:** Surgical copy-pasting. Safely extracts the target class/function from the source file and writes it to the destination file.
-- **Smart behavior:** Leaves the original file intact (Safe Mode) so you can manually delete it when you are confident.
+- **Smart behavior:** Leaves the original file intact (Safe Mode) so you can manually delete it when you are confident. Uses AST for `.py` files and a lightweight bracket-matching algorithm for `.js`, `.jsx`, `.ts`, and `.tsx` files.
 
 ### teach
 - **Usage:** `kay teach <word> <intent>`
@@ -88,7 +89,12 @@
 ### apply
 - **Usage:** `kay apply [--force]`
 - **What it does:** The ultimate AI sync tool. Reads your clipboard for specially formatted DeepSeek answers (using `@@FILE:` and `@@CMD`), previews the changes, and automatically overwrites your local files and runs the terminal commands.
-- **Smart behavior:** Checks if the new code is perfectly identical or suspiciously shorter than the old code and warns you first!
+- **Smart behavior:** Checks if the new code is perfectly identical or suspiciously shorter than the old code and warns you first! It also features **Fuzzy Whitespace Matching**, so even if the AI hallucinates indentation or line breaks, Kay will find the exact structural match and inject your code cleanly.
+
+### barrel
+- **Usage:** `kay barrel <folder>`
+- **What it does:** Scans a folder for `.js`, `.jsx`, `.ts`, and `.tsx` files containing exports and auto-generates an `index.js` barrel file.
+- **Smart behavior:** Automatically ignores existing index files and seamlessly groups all exported modules to simplify your React/Node architecture.
 
 ## 🧪 Examples
 
@@ -141,6 +147,9 @@ kay apply --force
 kay clean --backups --dry-run
 kay clean --backups
 
+# Auto-Barrel
+kay barrel frontend/src/services/admin
+
 # Crash capture
 kay_run python main.py
 kay listen
@@ -163,7 +172,8 @@ Mister/
 │   ├── clean_parser.py
 │   ├── todo_parser.py
 │   ├── check_parser.py
-│   └── chat_parser.py
+│   ├── chat_parser.py
+│   └── barrel_parser.py
 ├── core/
 │   ├── tree_brain.py
 │   ├── reader_brain.py
@@ -175,7 +185,8 @@ Mister/
 │   ├── todo_brain.py
 │   ├── check_brain.py
 │   ├── chat_brain.py
-│   └── personality_engine.py
+│   ├── personality_engine.py
+│   └── barrel_brain.py
 ├── tools/
 │   ├── file_walker.py
 │   ├── error_catcher.py
@@ -197,12 +208,12 @@ Mister/
 - [x] todo
 - [x] check
 - [x] talk (Interactive Chat)
-- [x] analyze & extract (Refactoring)
+- [x] analyze & extract (Refactoring support for Python/JS/TS)
 - [x] teach command
-- [x] bundle & apply (LLM Sync)
+- [x] bundle & apply (LLM Sync with fuzzy patch matching)
+- [x] barrel export generator
 - [ ] `--fix` for imports
 - [ ] `--context` for find
-- [ ] `teach` command
 - [ ] Parallel search
 
 ## ❓ FAQ
