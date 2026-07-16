@@ -70,8 +70,9 @@ def print_help():
   extract         Safely extract a class/function to a new file
                   Example: kay extract bot.py main new_file.py
 
-  bundle          Bundle multiple files into a single clipboard string
+  bundle          Bundle multiple files or folders into a single clipboard string
                   Example: kay bundle file1.py file2.py
+                  Example: kay bundle bot/ core/
 
   apply           Apply file updates & terminal commands directly from clipboard
                   Example: kay apply [--force]

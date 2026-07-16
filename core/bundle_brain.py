@@ -9,7 +9,19 @@ class BundleBrain:
         sections = []
         missing = []
         
-        for file_path in file_paths:
+        expanded_paths = []
+        for path in file_paths:
+            if os.path.isdir(path):
+                for root, _, files in os.walk(path):
+                    # Skip common non-source directories
+                    if '.git' in root or '__pycache__' in root:
+                        continue
+                    for file in files:
+                        expanded_paths.append(os.path.join(root, file))
+            else:
+                expanded_paths.append(path)
+        
+        for file_path in expanded_paths:
             if not os.path.exists(file_path):
                 missing.append(file_path)
                 continue
