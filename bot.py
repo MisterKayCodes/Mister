@@ -24,6 +24,8 @@ def print_help():
                   If no path given, scans current folder
                   Example: python bot.py scan C:/myproject
                   Example: python bot.py scan
+                  Example: python bot.py scan --folders-only
+                  Example: python bot.py scan --depth 1
 
   read <file>     Show contents of a file
                   Example: kay read bot.py
@@ -77,12 +79,15 @@ def print_help():
   apply           Apply file updates & terminal commands directly from clipboard
                   Example: kay apply [--force]
 
+  create <type>   Scaffold a folder structure (e.g. backend)
+                  Example: kay create backend
+
   help            Show this message
 
 More commands coming: teach, remember
 """)
 
-def command_scan(path, show_line_count=False):
+def command_scan(path, show_line_count=False, folders_only=False, depth=None):
     """Handle the 'scan' command"""
     
     if not path:
@@ -98,7 +103,7 @@ def command_scan(path, show_line_count=False):
         return
     
     from core.tree_brain import TreeBrain
-    TreeBrain.scan_with_prompt(path, show_line_count=show_line_count)
+    TreeBrain.scan_with_prompt(path, show_line_count=show_line_count, folders_only=folders_only, max_depth=depth)
 
 def command_read(file_path, show_lines=False, line_range=None):
     """Handle the 'read' command"""
@@ -347,6 +352,22 @@ def command_barrel(folder_path):
     success, msg = BarrelBrain.generate_barrel(abs_path)
     print(msg)
 
+def command_create(target):
+    """Handle the 'create' command"""
+    if not target:
+        print("❌ Please specify what to create")
+        print("Example: kay create backend")
+        return
+        
+    if target.lower() == "backend":
+        from core.create_brain import CreateBrain
+        import os
+        path = os.getcwd()
+        CreateBrain.scaffold_backend(path)
+    else:
+        print(f"❌ Unknown create target: {target}")
+        print("Currently supported: backend")
+
 def main():
     """The Mouth - parses what you say"""
     
@@ -361,8 +382,8 @@ def main():
     
     elif command == "scan":
         from parsers import parse_scan
-        path, show_line_count = parse_scan(sys.argv)
-        command_scan(path, show_line_count=show_line_count)
+        path, show_line_count, folders_only, depth = parse_scan(sys.argv)
+        command_scan(path, show_line_count=show_line_count, folders_only=folders_only, depth=depth)
     
     elif command == "read":
         from parsers import parse_read
@@ -510,6 +531,11 @@ def main():
             print("Example: kay barrel frontend/src/services/admin")
         else:
             command_barrel(folder_path)
+            
+    elif command == "create":
+        from parsers import parse_create
+        target = parse_create(sys.argv)
+        command_create(target)
     
     else:
         print(f"❌ Unknown command: {command}")

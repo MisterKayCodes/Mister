@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: Set Mister's home folder
-set "MISTER_HOME=C:\Kaycris\Mister"
+set "MISTER_HOME=C:\Kaycris\MY_PROJECTS\Mister"
 
 :: Run the command and capture output
 set "cmd=%*"

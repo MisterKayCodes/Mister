@@ -1,2 +1,2 @@
 @echo off
-py C:\Kaycris\Mister\bot.py %*
+py C:\Kaycris\MY_PROJECTS\Mister\bot.py %*
