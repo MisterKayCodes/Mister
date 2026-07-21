@@ -79,8 +79,9 @@ def print_help():
   apply           Apply file updates & terminal commands directly from clipboard
                   Example: kay apply [--force]
 
-  create <type>   Scaffold a folder structure (e.g. backend)
+  create <type>   Scaffold a folder structure (e.g. backend, frontend)
                   Example: kay create backend
+                  Example: kay create frontend
 
   help            Show this message
 
@@ -364,9 +365,14 @@ def command_create(target):
         import os
         path = os.getcwd()
         CreateBrain.scaffold_backend(path)
+    elif target.lower() == "frontend":
+        from core.create_brain import CreateBrain
+        import os
+        path = os.getcwd()
+        CreateBrain.scaffold_frontend(path)
     else:
         print(f"❌ Unknown create target: {target}")
-        print("Currently supported: backend")
+        print("Currently supported: backend, frontend")
 
 def main():
     """The Mouth - parses what you say"""
